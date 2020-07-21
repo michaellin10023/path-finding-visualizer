@@ -27,6 +27,7 @@ class Spot:
         self.neighbors = []
         self.width = width
         self.total_rows = total_rows
+        self.visited = False
 
     def get_pos(self):
         return self.row, self.col
@@ -133,7 +134,7 @@ def reconstruct_path(cameFrom, current, draw):
         draw()
     
 
-def algorithm(draw, grid, start, end):
+def a_star(draw, grid, start, end):
     count = 0
     # The set of discovered nodes that may need to be (re-)expanded.
     # Initially, only the start node is known.
@@ -192,6 +193,34 @@ def algorithm(draw, grid, start, end):
 
     return False
 
+def bfs(draw, grid, start, end):
+    queue = []
+    queue.append(start)
+    start.visited = True
+
+    while queue:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        current = queue.pop(0)
+        if current == end:
+            end.make_end()
+            return True
+    
+        for neighbor in current.neighbors:
+            if neighbor.visited == False:
+                queue.append(neighbor)
+                neighbor.visited = True
+                neighbor.make_open()        
+
+        draw()
+
+        if current != start:
+            current.make_closed()
+
+    return False
+    
 def main(win, width):
     ROWS = 50
     grid = make_grid(ROWS, width)
@@ -238,7 +267,8 @@ def main(win, width):
                         for spot in row:
                             spot.update_neighbors(grid)
 
-                    algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    # a_star(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    bfs(lambda: draw_grid, grid, start, end)
 
                 if event.key == pygame.K_c:
                     start = None
