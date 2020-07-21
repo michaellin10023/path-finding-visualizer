@@ -1,10 +1,11 @@
 import pygame
+import pygame_menu
 import math
 from queue import PriorityQueue
 
 WIDTH = 800 
 WIN = pygame.display.set_mode((WIDTH,WIDTH))
-pygame.display.set_caption("A pathfinding algorithm")
+pygame.display.set_caption("Pathfinding algorithm")
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -195,6 +196,7 @@ def a_star(draw, grid, start, end):
 
 def bfs(draw, grid, start, end):
     queue = []
+    cameFrom = {}
     queue.append(start)
     start.visited = True
 
@@ -205,11 +207,13 @@ def bfs(draw, grid, start, end):
 
         current = queue.pop(0)
         if current == end:
+            reconstruct_path(cameFrom, current, draw)
             end.make_end()
             return True
     
         for neighbor in current.neighbors:
             if neighbor.visited == False:
+                cameFrom[neighbor] = current
                 queue.append(neighbor)
                 neighbor.visited = True
                 neighbor.make_open()        
@@ -221,14 +225,15 @@ def bfs(draw, grid, start, end):
 
     return False
     
-def main(win, width):
+def main(win, width, algo):
     ROWS = 50
     grid = make_grid(ROWS, width)
      
     start = None
     end = None
-
     run = True
+    # pygame.draw.rect(pygame.display.set_mode((400, 300)), BLACK, pygame.Rect(10, 10, 100, 100))
+                                             
     while run:
         draw(win, grid, ROWS, width)
 
@@ -267,17 +272,21 @@ def main(win, width):
                         for spot in row:
                             spot.update_neighbors(grid)
 
-                    # a_star(lambda: draw(win, grid, ROWS, width), grid, start, end)
-                    bfs(lambda: draw_grid, grid, start, end)
+                    if algo == 1:
+                        a_star(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    elif algo == 2:
+                        bfs(lambda: draw(win, grid, ROWS, width), grid, start, end)
 
                 if event.key == pygame.K_c:
                     start = None
                     end = None
                     grid = make_grid(ROWS, width)
+
+                if event.key == pygame.K_r:
+                    return
                 
     pygame.quit()
 
-main(WIN,WIDTH)
 
     
         
