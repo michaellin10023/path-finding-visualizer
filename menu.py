@@ -14,7 +14,7 @@ def set_algo(selected, value):
     """
     Set the difficulty of the game.
     """
-    print('Set difficulty to {} ({})'.format(selected[0], value))
+    print('Set algorithm to {} ({})'.format(selected[0], value))
     global algo
     algo = value
 
@@ -34,11 +34,12 @@ menu = pygame_menu.Menu(height=WIDTH,
                         theme=pygame_menu.themes.THEME_BLUE,
                         title='Welcome Pathfinding Visualizer')
 
-menu.add_selector('Algorithm: ', [('A star', 1), ('BFS', 2)], onchange=set_algo)
+menu.add_selector('Algorithm: ', [('A*', 1), ('Dijkstra', 2), ('BFS', 3), ('DFS', 4)], onchange=set_algo)
 menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygame_menu.events.EXIT)
 
 if __name__ == '__main__':
+
     while True:
         events = pygame.event.get()
         for event in events:
@@ -50,3 +51,5 @@ if __name__ == '__main__':
             menu.draw(surface)
 
         pygame.display.update()
+    
+    pygame.quit()

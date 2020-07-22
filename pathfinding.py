@@ -1,6 +1,7 @@
 import pygame
 import pygame_menu
 import math
+from collections import deque
 from queue import PriorityQueue
 
 WIDTH = 800 
@@ -74,14 +75,14 @@ class Spot:
 
     def update_neighbors(self, grid):
         self.neighbors = []
-        if self.row < self.total_rows - 1 and not grid[self.row+1][self.col].is_barrier(): ## down
-            self.neighbors.append(grid[self.row+1][self.col])
         if self.row > 0 and not grid[self.row-1][self.col].is_barrier(): ## up
             self.neighbors.append(grid[self.row-1][self.col])
-        if self.col > 0 and not grid[self.row][self.col-1].is_barrier(): ## left
-            self.neighbors.append(grid[self.row][self.col-1])
         if self.col < self.total_rows - 1 and not grid[self.row][self.col+1].is_barrier(): ## right
             self.neighbors.append(grid[self.row][self.col+1])
+        if self.row < self.total_rows - 1 and not grid[self.row+1][self.col].is_barrier(): ## down
+            self.neighbors.append(grid[self.row+1][self.col])
+        if self.col > 0 and not grid[self.row][self.col-1].is_barrier(): ## left
+            self.neighbors.append(grid[self.row][self.col-1])
             
     
     def __lt__(self, other):
@@ -163,6 +164,7 @@ def a_star(draw, grid, start, end):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+        
 
         # This operation can occur in O(1) time if openSet is a min-heap or a priority queue
         current = openSet.get()[2]
@@ -185,6 +187,45 @@ def a_star(draw, grid, start, end):
                 if neighbor not in openSet_hash:
                     count += 1
                     openSet.put((fScore[neighbor], count, neighbor))
+                    openSet_hash.add(neighbor)
+                    neighbor.make_open()
+        draw()
+
+        if current != start:
+            current.make_closed()
+
+    return False
+
+def dijkstra(draw, grid, start, end):
+    count = 0
+    openSet = PriorityQueue()
+    openSet.put((0, count, start))
+    cameFrom = {}
+    gScore = {spot: float("inf") for row in grid for spot in row}
+    gScore[start] = 0
+    openSet_hash = {start}
+    
+    while not openSet.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        current = openSet.get()[2]
+        openSet_hash.remove(current)
+
+        if current == end:
+            reconstruct_path(cameFrom, current, draw)
+            end.make_end()
+            return True
+
+        for neighbor in current.neighbors:
+            temp_gScore = gScore[current] + 1
+            if temp_gScore < gScore[neighbor]:
+                gScore[neighbor] = temp_gScore
+                cameFrom[neighbor] = current
+                if neighbor not in openSet_hash:
+                    count += 1
+                    openSet.put((gScore[neighbor], count, neighbor))
                     openSet_hash.add(neighbor)
                     neighbor.make_open()
         draw()
@@ -224,7 +265,38 @@ def bfs(draw, grid, start, end):
             current.make_closed()
 
     return False
-    
+
+def dfs(draw, grid, start, end):
+    stack = deque()
+    cameFrom = {}
+    stack.append(start)
+
+    while stack:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        
+        current = stack.pop()
+        if current == end:
+            # reconstruct_path(cameFrom, current, draw)
+            end.make_end()
+            return True
+
+        if current.visited == False:
+            current.visited = True
+            for neighbor in current.neighbors:
+                cameFrom[neighbor] = current
+                stack.append(neighbor)
+                # neighbor.make_open()        
+
+        draw()
+
+        if current != start:
+            current.make_closed()
+
+    return False
+
+
 def main(win, width, algo):
     ROWS = 50
     grid = make_grid(ROWS, width)
@@ -232,14 +304,13 @@ def main(win, width, algo):
     start = None
     end = None
     run = True
-    # pygame.draw.rect(pygame.display.set_mode((400, 300)), BLACK, pygame.Rect(10, 10, 100, 100))
                                              
     while run:
         draw(win, grid, ROWS, width)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                pygame.quit()
 
             if pygame.mouse.get_pressed()[0]: ## left
                 pos = pygame.mouse.get_pos()
@@ -275,17 +346,21 @@ def main(win, width, algo):
                     if algo == 1:
                         a_star(lambda: draw(win, grid, ROWS, width), grid, start, end)
                     elif algo == 2:
+                        dijkstra(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    elif algo == 3:
                         bfs(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    elif algo == 4:
+                        dfs(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    print('done')
 
-                if event.key == pygame.K_c:
+                elif event.key == pygame.K_c:
                     start = None
                     end = None
                     grid = make_grid(ROWS, width)
 
-                if event.key == pygame.K_r:
-                    return
+                elif event.key == pygame.K_r:
+                    run = False
                 
-    pygame.quit()
 
 
     
