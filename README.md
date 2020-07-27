@@ -16,9 +16,10 @@ pip install pygame-menu
 ![Alt text](/img/demo.png?raw=true "Optional Title")
 
 To start algorithm : Press space
-To reset grid : Press C
-To go back to main menu: Press R
 
+To reset grid : Press C
+
+To go back to main menu: Press R
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
