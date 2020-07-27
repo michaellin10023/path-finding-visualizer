@@ -11,17 +11,14 @@ pip install pygame
 pip install pygame-menu
 ```
 
-## Usage
+## Demo
 
 ![Alt text](/img/demo.png?raw=true "Optional Title")
 
-```python
-import foobar
+To start algorithm : Press space
+To reset grid : Press C
+To go back to main menu: Press R
 
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
