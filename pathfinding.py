@@ -235,6 +235,9 @@ def dijkstra(draw, grid, start, end):
 
     return False
 
+def greedy(draw, grid, start, end):
+    pass
+
 def bfs(draw, grid, start, end):
     queue = []
     cameFrom = {}
@@ -348,10 +351,11 @@ def main(win, width, algo):
                     elif algo == 2:
                         dijkstra(lambda: draw(win, grid, ROWS, width), grid, start, end)
                     elif algo == 3:
-                        bfs(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                        greedy(lambda: draw(win, grid, ROWS, width), grid, start, end)
                     elif algo == 4:
+                        bfs(lambda: draw(win, grid, ROWS, width), grid, start, end)
+                    elif algo == 5:
                         dfs(lambda: draw(win, grid, ROWS, width), grid, start, end)
-                    print('done')
 
                 elif event.key == pygame.K_c:
                     start = None

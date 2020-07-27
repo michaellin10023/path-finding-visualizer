@@ -34,7 +34,7 @@ menu = pygame_menu.Menu(height=WIDTH,
                         theme=pygame_menu.themes.THEME_BLUE,
                         title='Welcome Pathfinding Visualizer')
 
-menu.add_selector('Algorithm: ', [('A*', 1), ('Dijkstra', 2), ('BFS', 3), ('DFS', 4)], onchange=set_algo)
+menu.add_selector('Algorithm: ', [('A*', 1), ('Dijkstra', 2), ('Greedy', 3), ('BFS', 4), ('DFS', 5)], onchange=set_algo)
 menu.add_button('Play', start_the_game)
 menu.add_button('Quit', pygame_menu.events.EXIT)
 
